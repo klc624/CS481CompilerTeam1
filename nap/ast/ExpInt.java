@@ -11,6 +11,6 @@ public class ExpInt extends Expression
   }
   public <T> T accept( Visitor<T> visitor )
   {
-	  return visitor.visit(this);
+	  return visitor.visit( this );
   }
 }

@@ -7,6 +7,12 @@ nap_syntax_examples: Syntactically correct nap programs
 compiler:
 - PrettyPrinter: a printer
 - Main: main method that takes a single file name as an argument, parses it then converts to abstract syntax tree and prints it into the console
-- BuilAST: Converts from parse tree to abstract syntax tree
+- BuildAST: Converts from parse tree to abstract syntax tree
+- Classes for SymTableBuilder:
+	- SymTableBuilder: main driving class to build the symbol tables for the type checker and check for use of undeclared variables
+	- HierarchyMap: class for keeping track of the hierarchial relationships between blocks (parent, child)
+	- Signature: used for managing signatures of function definitions
+	- GlobalSymbolTable: used for mapping functions to their signatures
+	- LocalSymbolTable: used for mapping variables within each block
 
 Run build.sh script, then from the main directory call java compiler.Main $NAP_FILE_PATH
