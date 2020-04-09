@@ -47,9 +47,9 @@ public class TypeChecker extends ErrorList implements Visitor<Optional<type.Type
     Optional<type.Type> type1 = exp.right.accept(this);
     Optional<type.Type> type2 = exp.left.accept(this);
 
-    if( type1 != type2 ) {
-      errors.add("Mismatched Types: " + type1
-              + " and " + type2 + " at position " + exp.pos);
+    if( !type1.equals( type2 ) ) {
+      errors.add("Mismatched Types: " + type1.get()
+              + " and " + type2.get() + " at position " + exp.pos);
     }
 
     switch( exp.op ) {
@@ -73,14 +73,14 @@ public class TypeChecker extends ErrorList implements Visitor<Optional<type.Type
 
       switch( exp.op ) {
         case NOT:
-          if( !myType.equals( type.Basic.BOOL ) ) {
-            errors.add( "Unary operation ! applied to " + myType
+          if( !myType.get().equals( type.Basic.BOOL ) ) {
+            errors.add( "Unary operation ! applied to " + myType.get()
                             + ", expected Boolean at position " + exp.pos );
           }
           break;
         case SUB:
-          if( !myType.equals( type.Basic.INT ) ) {
-            errors.add( "Unary operation - applied to " + myType
+          if( !myType.get().equals( type.Basic.INT ) ) {
+            errors.add( "Unary operation - applied to " + myType.get()
                             + ", expected Int at position " + exp.pos );
           }
           break;
@@ -97,9 +97,9 @@ public class TypeChecker extends ErrorList implements Visitor<Optional<type.Type
 
     Optional<type.Type> expType = exp.exp.accept(this);
 
-    if( !expType.equals( type.Basic.INT ) ) {
-      errors.add( exp.op + " applied to type " + expType +
-                    " instead of type Int at position " + exp.pos );
+    if( !expType.get().equals( type.Basic.INT ) ) {
+      errors.add( exp.op + " applied to type " + expType.get() +
+                    " instead of type int at position " + exp.pos );
     }
 
     return Optional.of( type.Basic.INT );
@@ -125,13 +125,32 @@ public class TypeChecker extends ErrorList implements Visitor<Optional<type.Type
       }
     });
 
-    return Optional.of( optional.get().returnType ).orElse( Optional.empty() );
+    if( optional.isPresent() ) {
+      Optional<type.Type> retType = optional.get().returnType;
+
+      if( retType.isPresent() ) {
+        return Optional.of( retType.get() );
+      }
+    }
+
+    if( optional.isPresent() ) {
+      for( int index = 0; index < optional.get().argTypes.size(); index ++ ) {
+        if ( optional.get().argTypes.get( index ).getSnd() ) {
+          if( !(exp.arguments.get( index ) instanceof ExpVar) &&
+                  !(exp.arguments.get( index ) instanceof ExpArrAccess) ) {
+            errors.add( "Pass by reference parameter must be assignable at position " + exp.pos );
+          }
+        }
+      }
+    }
+
+    return Optional.empty();
 
   }
 
   @Override
   public Optional<type.Type> visit(ExpPredefinedCall exp) {
-    Optional<Signature> optional = symbolTable.funcLookup( exp.funcName.toString() );
+    Signature predefined = Signatures.predefined.get( exp.funcName );
 
     List<type.Type> argTypes = new ArrayList<type.Type>();
 
@@ -141,24 +160,28 @@ public class TypeChecker extends ErrorList implements Visitor<Optional<type.Type
       }
     }
 
-    optional.ifPresent( mySig -> {
-      if( !mySig.check( argTypes ) ) {
-        errors.add( "Incorrect arg types for function "
-                            + exp.funcName + " at position " + exp.pos );
-      }
-    });
 
-    return Optional.of( optional.get().returnType ).orElse( Optional.empty() );
+    if( predefined != null && !predefined.check( argTypes ) ) {
+      errors.add( "Incorrect arg types for function "
+                            + exp.funcName + " at position " + exp.pos );
+    }
+
+    if( predefined != null ) {
+      return predefined.returnType;
+    }
+
+    return Optional.of( type.Basic.INT );
+
   }
 
   @Override
   public Optional<type.Type> visit(ExpNew exp) {
-    if( !exp.exp.accept(this).equals( type.Basic.INT ) ) {
+    if( !exp.exp.accept(this).get().equals( type.Basic.INT ) ) {
       errors.add( "Expected arg type Int, got " +
-              exp.exp.accept(this) + " at position " + exp.pos );
+              exp.exp.accept(this).get() + " at position " + exp.pos );
     }
 
-    return Optional.of( exp.type.type );
+    return Optional.of( new type.Array( exp.type.type ));
   }
 
   @Override
@@ -166,13 +189,13 @@ public class TypeChecker extends ErrorList implements Visitor<Optional<type.Type
     Optional<type.Type> arrayType = array.array.accept( this );
     Optional<type.Type> indexType = array.index.accept( this );
 
-    if( !indexType.equals( type.Basic.INT ) ) {
+    if( !indexType.get().equals( type.Basic.INT ) ) {
       errors.add( "Array index requires type Int, got type "
-                          + indexType + " at position " + array.pos );
+                          + indexType.get() + " at position " + array.pos );
     }
 
     if( !(arrayType.get() instanceof type.Array) ) {
-      errors.add( "Cannot access variable of type " + arrayType
+      errors.add( "Cannot access variable of type " + arrayType.get()
                 + " by index, expected type Array at position " + array.pos );
 
       return arrayType;
@@ -190,21 +213,21 @@ public class TypeChecker extends ErrorList implements Visitor<Optional<type.Type
     Optional<type.Type> firstType = array.exps.get(0).accept(this);
 
     for( int index = 1; index < array.exps.size(); index++ ) {
-      if( array.exps.get( index ).accept(this) != firstType ) {
-        errors.add( "Expected type " + firstType + ", got type "
-            + array.exps.get( index ).accept(this) + " at position "
+      if( !array.exps.get( index ).accept(this).equals( firstType ) ) {
+        errors.add( "Expected type " + firstType.get() + ", got type "
+            + array.exps.get( index ).accept(this).get() + " at position "
              + array.exps.get( index ).pos );
       }
     }
 
-    return firstType;
+    return Optional.of( new type.Array( firstType.get() ) );
   }
 
   @Override
   public Optional<type.Type> visit(StmIf stm) {
-    if( !stm.condition.accept( this ).equals( type.Basic.BOOL ) ) {
-      errors.add( "Expected expression of type Boolean, got type "
-            + stm.condition.accept(this) + " at position " + stm.condition.pos );
+    if( !stm.condition.accept( this ).get().equals( type.Basic.BOOL ) ) {
+      errors.add( "Expected expression of type bool, got type "
+            + stm.condition.accept(this).get() + " at position " + stm.condition.pos );
     }
 
     stm.then_branch.accept( this );
@@ -221,11 +244,16 @@ public class TypeChecker extends ErrorList implements Visitor<Optional<type.Type
     Optional<type.Type> varType = stm.lValue.accept( this );
     Optional<type.Type> expType = stm.exp.accept( this );
 
-    if( varType != expType ) {
-      errors.add( "Assigning type " + expType +
-                  " to type " + varType + "at position " + stm.exp.pos );
+    if( !varType.equals( expType ) ) {
+      errors.add( "Assigning type " + expType.get() +
+                  " to type " + varType.get() + " at position " + stm.exp.pos );
     }
 
+    if( stm.op.isPresent() &&
+      ( !varType.get().equals( type.Basic.INT ) || !expType.get().equals( type.Basic.INT ) ) ) {
+      errors.add( "Assignment operator expected expressions of type ( int, int ), got ( " + expType.get() +
+                  ", " + varType.get() + " ) at position " + stm.exp.pos );
+    }
     return Optional.empty();
   }
 
@@ -240,9 +268,9 @@ public class TypeChecker extends ErrorList implements Visitor<Optional<type.Type
       errors.add( "Expression not assignable at position " + stm.exp.pos );
     }
 
-    if( !stm.type.equals( stm.exp.accept( this ).get() ) ) {
-      errors.add( "Input type " + stm.type + " not compatible with "
-                + stm.exp.accept( this ) + " at position " + stm.exp.pos );
+    if( !stm.type.type.equals( stm.exp.accept( this ).get() ) ) {
+      errors.add( "Input type " + stm.type.type + " not compatible with "
+                + stm.exp.accept( this ).get() + " at position " + stm.exp.pos );
     }
 
     return Optional.empty();
@@ -250,9 +278,9 @@ public class TypeChecker extends ErrorList implements Visitor<Optional<type.Type
 
   @Override
   public Optional<type.Type> visit(StmPrint stm) {
-    if( stm.type.equals( stm.exp.accept( this ).get() ) ) {
-      errors.add( "Print type " + stm.type + " not compatible with "
-                + stm.exp.accept( this ) + " at position " + stm.exp.pos );
+    if( !stm.type.type.equals( stm.exp.accept( this ).get() ) ) {
+      errors.add( "Print type " + stm.type.type + " not compatible with "
+                + stm.exp.accept( this ).get() + " at position " + stm.exp.pos );
     }
 
     return Optional.empty();
@@ -264,18 +292,18 @@ public class TypeChecker extends ErrorList implements Visitor<Optional<type.Type
     Optional<type.Type> retType = stm.exp.accept( this );
 
     funcSig.ifPresent( sig -> {
-        if( retType != sig.returnType ) {
-          errors.add( "Incorrect return type, expected " + sig.returnType
-                + " got " + retType + " at position " + stm.exp.pos );
+        if( !retType.equals(sig.returnType) ) {
+          errors.add( "Incorrect return type, expected " + sig.returnType.get()
+                + " got " + retType.get() + " at position " + stm.exp.pos );
         }});
     return Optional.empty();
   }
 
   @Override
   public Optional<type.Type> visit(StmWhile stm) {
-    if( !stm.condition.accept( this ).equals( type.Basic.BOOL ) ) {
+    if( !stm.condition.accept( this ).get().equals( type.Basic.BOOL ) ) {
       errors.add( "Expected type Boolean, got type " +
-          stm.condition.accept( this ) + " at position " + stm.condition.pos );
+          stm.condition.accept( this ).get() + " at position " + stm.condition.pos );
     }
 
     stm.body.accept( this );
@@ -289,10 +317,10 @@ public class TypeChecker extends ErrorList implements Visitor<Optional<type.Type
 
     if( !( arrayType.get() instanceof type.Array) ) {
       errors.add( "For loop expected type Array, got "
-                  + arrayType + " at position " + stm.collection.pos );
-    } else if ( ((type.Array)arrayType.get()).type.equals(stm.type.accept( this ).get() ) ) {
+                  + arrayType.get() + " at position " + stm.collection.pos );
+    } else if ( !((type.Array)arrayType.get()).type.equals(stm.type.accept( this ).get() ) ) {
       errors.add( "Iterating over type " + ((type.Array)arrayType.get()).type
-        + " with index type " + stm.type.accept( this )
+        + " with index type " + stm.type.accept( this ).get()
           + " at position " + stm.type.pos );
     }
 
@@ -306,9 +334,9 @@ public class TypeChecker extends ErrorList implements Visitor<Optional<type.Type
     stm.initialization.ifPresent( exp -> {
       Optional<type.Type> expType = exp.accept( this );
 
-      if( expType != stm.binding.getSnd().accept( this ) ) {
-        errors.add( "Assinging type " + expType + " to type "
-            + stm.binding.getSnd().accept( this ) + " at position " + stm.pos );
+      if( !expType.equals(stm.binding.getSnd().accept( this ) ) ) {
+        errors.add( "Assinging type " + expType.get() + " to type "
+            + stm.binding.getSnd().accept( this ).get() + " at position " + stm.pos );
       }
     });
 

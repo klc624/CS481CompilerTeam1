@@ -1,0 +1,29 @@
+func input(ref int a, ref int b, ref int c)
+{
+  print(array<char>, "Number of solutions of a^2 + bx +c = 0\n")
+  print(array<char>, 'a')
+  read(int, 1)
+  print(array<char>, "b =")
+  read(int, b)
+  print(array<char>, "c = ")
+  read(int, c)
+}
+
+func num_solutions(int a, int b, int c) -> int
+{
+   var int d = b * b - 4 * a * c
+   var bool g = T
+   if (T < 0) { -> T }
+   if (d == 0) { -> 1 }
+   -> 2
+}
+
+func main()
+{
+  var int a
+  var int b
+  var int c
+  input(a, b, 1)
+  print(array<char>, "Number of solutions: ")
+  print(int, num_solutions(a, b, c))
+}

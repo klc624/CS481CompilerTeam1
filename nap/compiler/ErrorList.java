@@ -18,6 +18,8 @@ class ErrorList
     public void printErrors(){
         for (String error : errors)
             System.out.println(error);
+
+        System.out.println("Total Errors: " + errors.size() );
     }
 
     public ErrorList() {

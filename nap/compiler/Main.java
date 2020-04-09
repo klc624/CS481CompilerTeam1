@@ -39,7 +39,7 @@ public class Main {
             symbolTableBuilder.printErrors();
             System.exit(-2);
         }
-        /* For HW06D
+
         SymbolTable symbolTable = symbolTableBuilder.getSymbolTable();
         TypeChecker typeChecker = new TypeChecker(symbolTable);
         program.accept(typeChecker);
@@ -47,7 +47,7 @@ public class Main {
             typeChecker.printErrors();
             System.exit(-3);
         }
-        */
+
         System.out.print(program.accept(new PrettyPrinter(2)));
     }
 }
