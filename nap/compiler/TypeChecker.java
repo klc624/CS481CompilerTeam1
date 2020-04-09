@@ -181,17 +181,20 @@ public class TypeChecker extends ErrorList implements Visitor<Optional<type.Type
       }
     }
 
+    if( exp.funcName == OpPredefined.LENGTH ) {
+      if( !(argTypes.get(0) instanceof type.Array) ) {
+        errors.add( "Function length expects array, got "
+                              + argTypes.get(0) + " at position " + exp.pos );
+      }
 
-    if( predefined != null && !predefined.check( argTypes ) ) {
+      return Optional.of( type.Basic.INT );
+    }
+    if( !predefined.check( argTypes ) ) {
       errors.add( "Incorrect arg types for function "
                             + exp.funcName + " at position " + exp.pos );
     }
 
-    if( predefined != null ) {
-      return predefined.returnType;
-    }
-
-    return Optional.of( type.Basic.INT );
+    return predefined.returnType;
 
   }
 
