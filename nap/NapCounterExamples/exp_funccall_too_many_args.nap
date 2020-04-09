@@ -1,0 +1,19 @@
+func test( int x, int y, int z ) -> int
+{
+
+}
+func testRef( ref int x, ref int y, ref int z )
+{
+
+}
+func main()
+{
+  var int a
+  var int b
+  var int c
+  var int d
+
+  a = test( 7, 4, test( 5, 4, 2 ) )
+
+  testRef( a, b, c, d ) #Should fail, too many arguments
+}

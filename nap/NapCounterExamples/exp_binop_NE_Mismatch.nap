@@ -1,0 +1,16 @@
+func main()
+{
+  var int a
+  var int b
+  var int c
+  var bool d
+  var bool e
+  var bool f
+
+  d = (e || T)
+  d = ( 2 > 1 )
+  d = ( T == F )
+  d = ( T != 2 ) #!= different types
+  d = ( a > c || ( e || f ))
+  d = ( a > b + c && T )
+}

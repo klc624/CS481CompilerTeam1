@@ -1,0 +1,9 @@
+func main()
+{
+  var int a
+  var array<int> nums = new( int, 10 )
+
+  nums++ #Should fail, type array instead of type int
+  a--
+  nums[2]--
+}

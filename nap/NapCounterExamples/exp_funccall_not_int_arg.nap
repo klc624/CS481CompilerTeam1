@@ -1,0 +1,18 @@
+func test( int x, int y, int z ) -> int
+{
+
+}
+func testRef( ref int x, ref int y, ref int z )
+{
+
+}
+func main()
+{
+  var int a
+  var int b
+  var int c
+
+  a = test( 7, T, test( 5, 4, 2 ) ) #Should fail, expects int gets bool
+
+  testRef( a, b , c )
+}

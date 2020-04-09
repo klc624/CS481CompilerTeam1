@@ -1,0 +1,13 @@
+func main()
+{
+  var int a
+  var char b
+  var array<int> nums = new( int, 10 )
+
+  a /= 70
+  a = 120
+  b = 't'
+
+  nums[7] += 12
+  nums[0] = 0
+}

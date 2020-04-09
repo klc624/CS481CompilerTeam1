@@ -1,0 +1,9 @@
+func intRet( array<int> x ) -> bool
+{
+
+}
+func main()
+{
+  var array<int> nums = { 10, 20, 30, intRet({ 10, 20, 30 } ) } #Should throw error, type bool in int array
+  var array<char> letters = {'a', 'b', 'c'}
+}

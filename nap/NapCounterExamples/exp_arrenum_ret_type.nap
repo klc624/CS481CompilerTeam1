@@ -1,0 +1,9 @@
+func intRet( array<int> x ) -> int
+{
+
+}
+func main()
+{
+  var int nums = { 10, 20, 30, intRet({ 10, 20, 30 } ) } #Should throw error, storing array in int
+  var array<char> letters = {'a', 'b', 'c'}
+}

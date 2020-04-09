@@ -1,0 +1,9 @@
+func main() {
+  var int a
+  var char c
+  var array<int> b = new( int, 10 )
+
+  c = char_of_byte( byte_of_int( a ) )
+
+  c = length( b ) #should fail, ret type int to char
+}

@@ -1,0 +1,13 @@
+func main()
+{
+  var int a
+  var char b
+
+  if( T )
+  {
+    a++
+  }
+  else{
+    b = 'Y'
+  }
+}

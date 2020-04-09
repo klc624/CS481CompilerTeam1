@@ -1,0 +1,18 @@
+func test( int x, int y, int z ) -> int
+{
+
+}
+func testRef( ref int x, ref int y, ref int z )
+{
+
+}
+func main()
+{
+  var int a
+  var int b
+  var int c
+
+  a = test( 7, 4, test( 5, 4, 2 ) )
+
+  testRef( a, 7 , c ) #Should fail, 7 is not assignable
+}

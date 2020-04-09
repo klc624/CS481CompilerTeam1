@@ -1,0 +1,13 @@
+func main()
+{
+  var int a
+  var char b
+  var array<int> nums = new( int, 10 )
+
+  7 /= 70 #Should throw error, non assignable expr
+  a = 20
+  b = 't'
+
+  nums[7] += 7
+  nums[0] = 20
+}

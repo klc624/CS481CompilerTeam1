@@ -1,0 +1,9 @@
+func main()
+{
+  var int nums
+
+  for( int y in nums ) #Should fail, expects type int
+  {
+    y = 10
+  }
+}

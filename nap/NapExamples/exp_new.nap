@@ -1,0 +1,5 @@
+func main()
+{
+  var array<int> nums = new( int, 10 )
+  var array<char> letters = new(char, 10)
+}

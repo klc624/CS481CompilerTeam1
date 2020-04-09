@@ -1,0 +1,8 @@
+func main()
+{
+  var int nums
+  var array<char> letters = new( char, 10 )
+
+  nums[0] = 10 #Should fail, var type int instead of array
+  letters[7] = 'T'
+}

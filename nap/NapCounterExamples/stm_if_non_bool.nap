@@ -1,0 +1,13 @@
+func main()
+{
+  var int a
+  var char b
+
+  if( 0 ) #Should error, conditional requires type bool
+  {
+    a++
+  }
+  else{
+    b = 'Y'
+  }
+}

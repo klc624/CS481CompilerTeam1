@@ -1,0 +1,9 @@
+func main()
+{
+  var int a
+  var array<int> nums = new( int, 10 )
+
+  nums[0]++
+  a++
+  nums[2]--
+}

@@ -1,0 +1,7 @@
+func main()
+{
+  var int x = 10
+
+  print( int, x )
+  print( char, "Hello, my name is Inigo Montoya") #Should throw error, char array to char
+}

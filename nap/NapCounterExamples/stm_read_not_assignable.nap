@@ -1,0 +1,8 @@
+func main()
+{
+  var int num
+  var array<int> nums
+
+  read( int, 7 ) #Should fail, non assignable expression
+  read( int, nums[0] )
+}

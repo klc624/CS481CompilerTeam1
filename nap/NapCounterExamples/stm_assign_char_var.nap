@@ -1,0 +1,13 @@
+func main()
+{
+  var int a
+  var char b
+  var array<char> nums = new( char, 10 )
+
+  a /= 70
+  a = 20
+  b = 't'
+
+  nums[7] += '7' #Should throw error, char not int
+  nums[0] = '7'
+}

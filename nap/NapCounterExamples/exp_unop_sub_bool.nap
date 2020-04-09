@@ -1,0 +1,8 @@
+func main()
+{
+  var int a = 7
+  var bool b = T
+
+  a = -a
+  b = -b
+}

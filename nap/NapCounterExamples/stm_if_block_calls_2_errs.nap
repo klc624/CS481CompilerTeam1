@@ -1,0 +1,13 @@
+func main()
+{
+  var int a
+  var char b
+
+  if( T )
+  {
+    a = 'Y' #Should return error, type char to type int
+  }
+  else{
+    b++ #Should return error, ++ requires int
+  }
+}

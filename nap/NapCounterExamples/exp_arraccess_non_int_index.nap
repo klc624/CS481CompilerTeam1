@@ -1,0 +1,8 @@
+func main()
+{
+  var array<int> nums = new( int, 10 )
+  var array<char> letters = new( char, 10 )
+
+  nums[T] = 10 #Should fail, index type bool instead of int
+  letters[7] = 'T'
+}

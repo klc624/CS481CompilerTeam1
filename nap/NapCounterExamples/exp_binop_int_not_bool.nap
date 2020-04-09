@@ -1,0 +1,14 @@
+func main()
+{
+  var int a
+  var int b
+  var int c
+  var bool d
+  var bool e
+  var bool f
+
+  d = (e || 1) #Should error, int and bool
+  d = ( a > c )
+  d = ( a > c || ( e || f ))
+  d = ( a > b + c && T )
+}

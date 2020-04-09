@@ -1,0 +1,5 @@
+func main()
+{
+  var array<int> nums = new( int, T ) #Should fail, needs int not bool
+  var array<char> letters = new(char, 10)
+}

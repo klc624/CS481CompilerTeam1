@@ -1,0 +1,7 @@
+func main()
+{
+  var int x = 10
+
+  print( int, x )
+  print( array<char>, "Hello, my name is Inigo Montoya")
+}

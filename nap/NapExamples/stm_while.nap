@@ -1,0 +1,19 @@
+func main()
+{
+  var int x = 0
+  var array<int> nums = new( int, 10 )
+
+  while( x < length(nums) )
+  {
+    nums[x] = 10
+    x++
+  }
+
+  x = 0
+  
+  do
+  {
+    print( array<char>, "Hello, my name is Inigo Montoya")
+    x++
+  } while( x < (10 * length( nums ) ) )
+}

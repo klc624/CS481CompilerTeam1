@@ -1,0 +1,14 @@
+func main()
+{
+  var int a
+  var int b
+  var int c
+  var bool d
+  var bool e
+  var bool f
+
+  d = (e || T)
+  d = ( d > e ) #Should error, > comparator with type int bool
+  d = ( a > c || ( e || f ))
+  d = ( a > b + c && T )
+}
