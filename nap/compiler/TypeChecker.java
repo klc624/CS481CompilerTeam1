@@ -348,7 +348,11 @@ public class TypeChecker extends ErrorList implements Visitor<Optional<type.Type
   public Optional<type.Type> visit(StmFor stm) {
     Optional<type.Type> arrayType = stm.collection.accept( this );
 
-    if( !( arrayType.get() instanceof type.Array) ) {
+    // ASSIGNMENT 6D FEEDBACK
+    // updated if...
+    if( !( arrayType.isPresent() && arrayType.get() instanceof type.Array ) ) {
+      // TODO: "error message should be adapted accordingly..."
+        // "(get should not be used before checking isPresent)" ?
       errors.add( "For loop expected type array, got "
                   + arrayType.get() + " at position " + stm.collection.pos );
     } else if ( !((type.Array)arrayType.get()).type.equals(stm.type.accept( this ).get() ) ) {
