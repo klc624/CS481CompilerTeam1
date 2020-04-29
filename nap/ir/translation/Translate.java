@@ -129,8 +129,6 @@ public class Translate
           return Unary.Operation.INT_OF_BYTE;
         case BYTE_OF_INT:
           return Unary.Operation.BYTE_OF_INT;
-        case LENGTH:
-          return Unary.Operation.LENGTH;
       }
 
       return Unary.Operation.LENGTH;
@@ -358,17 +356,7 @@ public class Translate
       List<ir.com.Command> code = new LinkedList<>();
       List<ir.expr.Expression> arguments = new LinkedList<>();
 
-      ir.expr.Unary.Operation funcName = ofPredefined( exp.funcName );
-
       Frame frame;
-      Label entryLabel;
-      Label exitLabel;
-      type.Type returnType;
-
-      Register reg;
-      List<Register> params;
-      List<Boolean> passByRef;
-      int size; // IDK WHAT TO DO FOR SIZE
 
       for ( Expression e : exp.arguments )
       {
@@ -377,50 +365,53 @@ public class Translate
         code.addAll( result.getCode );
       }
 
+      ir.expr.Unary.Operation funcName = ofPredefined( exp.funcName );
+
       switch( funcName )
       {
         case Unary.Operation.LENGTH:
-          returnType = BasicType.INT;
-          entryLabel = new Label( "lengthEntry" );
-          exitLabel = new Label( "lengthExit" );
-          params.add( new Register( ir.Type.ADDRESS ) );
+          frame = new Frame( new Label( "lengthEntry" ),
+                             new Label( "lengthExit" ),
+                             MakeList.one( new Register( ir.Type.ADDRESS ) ),
+                             MakeList.one( false ),
+                             new Register( ir.Type.INT ) );
           break;
 
         case Unary.Operation.BYTE_OF_INT:
-          returnTyper = BasicType.BYTE;
-          entryLabel = new Label( "byteOfIntEntry" );
-          exitLabel = new Label( "byteOfIntExit" );
-          params.add( new Register( ir.Type.INT ) );
+          frame = new Frame( new Label( "byteOfIntEntry" ),
+                             new Label( "byteOfIntExit" ),
+                             MakeList.one( new Register( ir.Type.INT ) ),
+                             MakeList.one( false ),
+                             new Register( ir.Type.BYTE ) );
           break;
 
         case Unary.Operation.BYTE_OF_CHAR:
-          returnType = BasicType.BYTE;
-          entryLabel = new Label( "byteOfCharEntry" );
-          exitLabel = new Label( "byteOfCharExit" );
-          params.add( new Register( ir.Type.ADDRESS ) );
+          frame = new Frame( new Label( "byteOfCharEntry" ),
+                             new Label( "byteOfCharExit" ),
+                             MakeList.one( new Register( ir.Type.BYTE ) ),
+                             MakeList.one( false ),
+                             new Register( ir.Type.BYTE ) );
           break;
 
         case Unary.Operation.INT_OF_BYTE:
-          returnType = BasicType.INT;
-          entryLabel = new Label( "intOfByteEntry" );
-          exitLabel = new Label( "intOfByteExit" );
-          params.add( new Register( ir.Type.BYTE ) );
+          frame = new Frame( new Label( "intOfByteEntry" ),
+                             new Label( "intOfByteExit" ),
+                             MakeList.one( new Register( ir.Type.BYTE ) ),
+                             MakeList.one( false ),
+                             new Register( ir.Type.INT ) );
           break;
 
         case Unary.Operation.CHAR_OF_BYTE:
-          returnType = BasicType.CHAR;
-          entryLabel = new Label( "charOfByteEntry" );
-          exitLabel = new Label( "charOfByteExit" );
-          params.add( new Register( ir.Type.BYTE ) );
+          frame = new Frame( new Label( "charOfByteEntry" ),
+                             new Label( "charOfByteExit" ),
+                             MakeList.one( new Register( ir.Type.BYTE ) ),
+                             MakeList.one( false ),
+                             new Register( ir.Type.BYTE ) );
           break;
       }
 
-      passByRef.add( false );
-      reg = new Register( returnType );
-
-      frame = new Frame( entryLabel, exitLabel , params, passByRef, reg );
-
-      frames.put( funcName, frame );
+      // ?? add the frame?
+      // frames.put( funcName, frame );
 
       ir.com.Command call = new FuncCall( reg, frame, arguments );
       code.add( call );
@@ -431,14 +422,87 @@ public class Translate
     @Override
     public Result visit(StmRead stm)
     {
-      // TODO: read
-      return null;
+      // TODO: this function isn't right...
+        // not sure how to specify the different frames
+      Register reg = new Register( ofType( stm.type ) );
+      List<ir.com.Command> code = new LinkedList<>();
+
+      Result result = stm.exp.accept(this);
+
+      code.addAll(result.getCode());
+      code.add( new ir.com.WriteReg( reg, result.getExp() ) );
+
+      Frame frame;
+
+      Optional<type.Type> typingResult = stm.exp.accept(typeChecker);
+
+      assert typingResult.isPresent() :
+          "Internal Error: typing failed in " + stm.exp;
+
+      frame = new Frame( new Label( "readEntry" ),
+                         new Label( "readExit" ),
+                         MakeList( new Register ( ofType( stm.type ) ),
+                                   new Register( ofType( typingResult.get() ) ) ),
+                         MakeList( false, false ) );
+
+      List<Register> arguments = new ArrayList<>();
+      arguments.add( new Register( ofType( stm.type ) ) );
+      arguments.add( new Register( ofType( typingResult.get() ) ) );
+
+      if( stm.type instanceof type.Type.INT )
+      {
+
+      }
+
+      else if ( stm.type instanceof type.Type.BOOL
+                || stm.type instanceof type.Type.CHAR
+                || stm.type instanceof type.Type.BYTE )
+      {
+
+      }
+
+      else if ( stm.type instanceof type.Type.Array && stm.type.type instanceof type.Type.CHAR )
+      {
+
+      }
+
+      else
+      {
+        // not supported
+      }
+
+      ir.com.Command call = new ProcCall( frame, arguments );
+
+      code.add(call);
+      return new Result(code);
     }
 
     @Override
     public Result visit(StmPrint stm)
     {
-      // TODO: print
+
+
+      if( stm.type instanceof type.Type.INT )
+      {
+
+      }
+
+      else if ( stm.type instanceof type.Type.BOOL
+                || stm.type instanceof type.Type.CHAR
+                || stm.type instanceof type.Type.BYTE )
+      {
+
+      }
+
+      else if ( stm.type instanceof type.Type.Array && stm.type.type instanceof type.Type.CHAR )
+      {
+
+      }
+
+      else
+      {
+        // not supported
+      }
 
       return null;
     }
@@ -450,14 +514,19 @@ public class Translate
       List<ir.expr.Expression> arguments = new LinkedList<>();
 
       Frame frame;
-      Label entryLabel = new Label( "newArrayEntry" );
-      Label exitLabel = new Label( "newArrayExit" );
-      type.Type returnType = ir.Type.ADDRESS;
 
-      Register reg = new Register( returnType );
+      switch( ofType( exp.type ) )
+      {
+        case ir.Type.INT:
+        case ir.Type.BYTE:
+
+      }
 
       List<Register> params;
-      params.add( new Register( ir.Type.INT ) );
+      // first parameter is a type
+      params.add( new Register( ofType( exp.Type )  ) );
+
+      // second parameter is a size
       params.add( new Register( ir.Type.INT ) );
 
       List<Boolean> passByRef;
@@ -494,7 +563,6 @@ public class Translate
     @Override
     public Result visit(ExpArrEnum array)
     {
-      Frame frame =
       return null;
     }
 
