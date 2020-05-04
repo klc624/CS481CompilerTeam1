@@ -263,7 +263,7 @@ public class Main {
             Path path = perform.getSourceFile().isPresent() ?
                     perform.getSourceFile().get() :
                     FileSystems.getDefault().getPath("a.out.asm");
-                    
+
             compile(path, translation.getFst(), translation.getSnd());
             if (perform.isVerbose()) System.out.println("done");
         }
