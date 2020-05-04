@@ -1,8 +1,0 @@
-func return() -> array<char>
-{
-  -> {10, 20, 30} #Should error, wrong return type
-}
-func main()
-{
-  var array<char> name = return()
-}

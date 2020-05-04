@@ -1,9 +1,0 @@
-func main()
-{
-  var array<int> nums = new( int, 10 )
-
-  for( int y in nums )
-  {
-    y = 10
-  }
-}

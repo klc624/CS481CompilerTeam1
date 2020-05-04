@@ -1,5 +1,7 @@
 package type;
 
+import java.util.Objects;
+
 public class Array extends Type {
     public Type type;
 
@@ -7,9 +9,11 @@ public class Array extends Type {
         this.type = type;
     }
 
+    public final static Type stringType = new type.Array(Basic.CHAR);
+
     @Override
     public String toString() {
-        return "array<" + type + ">";
+        return "array<" + this.type + ">";
     }
 
     @Override
@@ -18,5 +22,15 @@ public class Array extends Type {
         if (obj == null || getClass() != obj.getClass()) return false;
         Array arrayType = (Array) obj;
         return type.equals(arrayType.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
+    }
+
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+        return visitor.visit(this);
     }
 }
