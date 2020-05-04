@@ -1,16 +1,16 @@
 package ast;
 
-public enum OpAssign
-{
-  INC
-  {
+public enum OpAssign {
+  INC {
     @Override
-    public String toString() { return "++"; }
+    public String toString(){
+      return "++";
+    }
   },
-
-  DEC
-  {
+  DEC {
     @Override
-    public String toString() { return "--"; }
+    public String toString(){
+      return "--";
+    }
   }
 }

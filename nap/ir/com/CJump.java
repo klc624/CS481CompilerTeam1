@@ -28,8 +28,8 @@ public class CJump extends Command
 
     @Override
     public String toString() {
-        return "CJump (" + condition + ")"
-                + trueLabel + ", " +falseLabel;
+        return "CJump (" + condition + ", "
+                + trueLabel + ", " + falseLabel + ")";
     }
 
     @Override

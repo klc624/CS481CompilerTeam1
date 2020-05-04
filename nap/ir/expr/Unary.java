@@ -1,27 +1,19 @@
 package ir.expr;
 
 
+import ast.OpUnary;
 import ir.Type;
 
 public class Unary extends Expression
 {
-    public static enum Operation{
-        SUB,
-        NOT,
-        LENGTH,
-        CHAR_OF_BYTE,
-        BYTE_OF_CHAR,
-        INT_OF_BYTE,
-        BYTE_OF_INT
-    }
 
     private Expression exp;
-    private Operation op;
+    private OpUnary op;
 
     @Override
     public Type getType() {
         switch(op){
-            case SUB: case LENGTH: case INT_OF_BYTE: return Type.INT;
+            case SUB: return Type.INT;
             default: return Type.BYTE;
         }
     }
@@ -30,11 +22,11 @@ public class Unary extends Expression
         return exp;
     }
 
-    public Operation getOp() {
+    public OpUnary getOp() {
         return op;
     }
 
-    public Unary(Expression exp, Operation op) {
+    public Unary(Expression exp, OpUnary op) {
         this.exp = exp;
         this.op = op;
     }

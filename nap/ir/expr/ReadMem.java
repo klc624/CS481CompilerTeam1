@@ -1,9 +1,10 @@
 package ir.expr;
 
 import ir.Register;
+import ir.RegisterOffset;
 import ir.Type;
 
-public class ReadMem extends Expression {
+public class ReadMem extends Expression implements RegisterOffset {
     private Register reg;
     private Expression offset;
     private Type type;

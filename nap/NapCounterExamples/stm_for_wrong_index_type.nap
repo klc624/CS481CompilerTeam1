@@ -1,9 +1,0 @@
-func main()
-{
-  var array<int> nums = new( int, 10 )
-
-  for( char y in nums ) #Should fail, expects type int
-  {
-    y = 't'
-  }
-}

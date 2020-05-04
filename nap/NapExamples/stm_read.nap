@@ -1,8 +1,0 @@
-func main()
-{
-  var int num
-  var array<int> nums
-
-  read( int, num )
-  read( int, nums[0] )
-}

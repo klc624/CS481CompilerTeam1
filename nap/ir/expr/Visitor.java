@@ -7,5 +7,6 @@ public interface Visitor<T> {
     public T visit(ReadMem exp);
     public T visit(Unary exp);
     public T visit(Binary exp);
+    public T visit(Symbol exp);
 }
 

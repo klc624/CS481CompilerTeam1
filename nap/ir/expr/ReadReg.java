@@ -1,23 +1,27 @@
 package ir.expr;
 
+import ir.Register;
 import ir.Type;
 
-public class ReadReg extends Expression
-{
-    private ir.Register reg;
+public class ReadReg extends Expression {
+    private ir.Register register;
+
+    public ReadReg(ir.Register register) {
+        this.register = register;
+    }
 
     @Override
     public Type getType() {
-        return reg.getType();
+        return register.getType();
     }
 
-    public ReadReg(ir.Register reg) {
-        this.reg = reg;
+    public Register getRegister() {
+        return register;
     }
 
     @Override
     public String toString() {
-        return reg.toString();
+        return register.toString();
     }
 
     @Override
